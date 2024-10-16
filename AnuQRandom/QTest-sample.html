@@ -1,0 +1,104 @@
+  <html>
+  <head>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+      google.charts.load('current', {'packages':['corechart']});
+      google.charts.setOnLoadCallback(drawChart);
+
+      function drawChart() {
+        var data = google.visualization.arrayToDataTable([
+			['date', 'mean Shannon H entropy', 'mean Shannon H entropy minus three standard deviations', 'highest Shannon H entropy', 'lowest Shannon H entropy'],
+			['Sun Mar 12 21:00:39 2023', 0.99999963, 0.99999810, 1.00000000, 0.99999628],
+			['Sun Mar 12 21:30:13 2023', 0.99999964, 0.99999810, 1.00000000, 0.99999604],
+			['Sun Mar 12 21:59:46 2023', 0.99999966, 0.99999820, 1.00000000, 0.99999496],
+			['Sun Mar 12 22:29:22 2023', 0.99999963, 0.99999807, 1.00000000, 0.99999569],
+			['Sun Mar 12 22:58:55 2023', 0.99999966, 0.99999826, 1.00000000, 0.99999673],
+			['Sun Mar 12 23:28:29 2023', 0.99999966, 0.99999827, 1.00000000, 0.99999654],
+			['Sun Mar 12 23:58:03 2023', 0.99999966, 0.99999824, 1.00000000, 0.99999657],
+			['Mon Mar 13 00:27:37 2023', 0.99999967, 0.99999817, 1.00000000, 0.99999542],
+			['Mon Mar 13 20:21:00 2023', 0.99999964, 0.99999821, 1.00000000, 0.99999601],
+			['', null, null, null, null],
+			['', null, null, null, null],
+			['', null, null, null, null],
+			['', null, null, null, null],
+			['', null, null, null, null],
+			['', null, null, null, null],
+			['', null, null, null, null],
+			['', null, null, null, null],
+			['', null, null, null, null],
+			['', null, null, null, null],
+			['', null, null, null, null],
+			['', null, null, null, null],
+			['', null, null, null, null],
+			['', null, null, null, null],
+			['', null, null, null, null],
+			['', null, null, null, null],
+			['', null, null, null, null],
+			['', null, null, null, null],
+			['', null, null, null, null],
+			['', null, null, null, null],
+			['', null, null, null, null],
+			['', null, null, null, null],
+			['', null, null, null, null],
+			['', null, null, null, null],
+			['', null, null, null, null],
+			['', null, null, null, null],
+			['', null, null, null, null],
+			['', null, null, null, null],
+			['', null, null, null, null],
+			['', null, null, null, null],
+			['', null, null, null, null],
+			['', null, null, null, null],
+			['', null, null, null, null],
+			['', null, null, null, null],
+			['', null, null, null, null],
+			['', null, null, null, null],
+			['', null, null, null, null],
+			['', null, null, null, null],
+			['', null, null, null, null],
+			['Mon Mar 13 20:50:18 2023', 0.99999966, 0.99999827, 1.00000000, 0.99999722],
+			['Mon Mar 13 21:19:40 2023', 0.99999967, 0.99999826, 1.00000000, 0.99999467],
+			['Mon Mar 13 21:48:58 2023', 0.99999967, 0.99999820, 1.00000000, 0.99999558],
+			['Mon Mar 13 22:18:16 2023', 0.99999966, 0.99999819, 1.00000000, 0.99999585],
+			['Mon Mar 13 22:47:34 2023', 0.99999964, 0.99999814, 1.00000000, 0.99999654],
+			['Mon Mar 13 23:16:54 2023', 0.99999967, 0.99999825, 1.00000000, 0.99999658],
+			['Mon Mar 13 23:46:27 2023', 0.99999965, 0.99999814, 1.00000000, 0.99999615],
+			['Tue Mar 14 00:16:01 2023', 0.99999966, 0.99999816, 1.00000000, 0.99999561],
+			['Tue Mar 14 00:45:34 2023', 0.99999965, 0.99999811, 1.00000000, 0.99999579],
+			['Tue Mar 14 01:15:06 2023', 0.99999966, 0.99999817, 1.00000000, 0.99999643],
+			['Tue Mar 14 01:44:39 2023', 0.99999964, 0.99999813, 1.00000000, 0.99999625],
+			['Tue Mar 14 02:14:45 2023', 0.99999962, 0.99999802, 1.00000000, 0.99999484],
+			['Tue Mar 14 02:44:18 2023', 0.99999965, 0.99999803, 1.00000000, 0.99999209]
+        ]);
+        
+        var formatter = new google.visualization.NumberFormat({
+              fractionDigits: 8
+            });
+        formatter.format(data, 1);
+        formatter.format(data, 2);
+        formatter.format(data, 3);
+        formatter.format(data, 4);
+
+        var options = {
+          title: 'ANU QRNG test',
+          legend: { position: 'bottom' },
+          series: {
+            0: { lineWidth: 1 },
+            1: { lineWidth: 1 },
+            2: { lineWidth: 1 },
+            3: { lineWidth: 2 }
+          },          
+          colors: ['#3366cc', '#43459d', '#e2431e', '#e2431e'],
+          vAxis: {format:'0.00000000'}
+        };
+
+        var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
+
+        chart.draw(data, options);
+      }
+    </script>
+  </head>
+  <body>
+    <div id="curve_chart" style="width: 1350px; height: 750px"></div>
+  </body>
+</html>

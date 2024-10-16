@@ -1,5 +1,4 @@
 ﻿using AnuQRandom;
-using AnuQRandom.Entities;
 using AnuQRandom.Model;
 using System.Diagnostics.Meyer.Contracts;
 using System.Net;

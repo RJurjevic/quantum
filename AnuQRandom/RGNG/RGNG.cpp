@@ -121,8 +121,8 @@ static void random_seed()
 	_s[1] = xorshift64star(&_s[0]);
 }
 
-#define LOOP_COUNT_CHUNKS 32768
-#define LOOP_COUNT_EXPERIMENTS 1024
+#define LOOP_COUNT_CHUNKS 4096
+#define LOOP_COUNT_EXPERIMENTS 256
 #define LONG_SIZE_BITS (LONG_SIZE_BYTES * BYTE_SIZE_BITS)
 #define IP_SEEDD "127.0.0.1"
 #define PORT_SEEDD 1200
