@@ -4,10 +4,9 @@
 #include <math.h>
 #include <time.h>
 #include <string.h>
-#include <winsock2.h>
-#include <Ws2tcpip.h>
 #include <signal.h>
 #include <fstream>
+#include <windows.h>
 
 #pragma comment(lib,"ws2_32.lib")
 
@@ -65,30 +64,44 @@ static unsigned __int64 rand_uint64(void)
 
 #define BYTE_SIZE_BITS 8
 #define LONG_SIZE_BYTES sizeof(unsigned __int64)
-#define SEEDD_SIZE_BYTES 32768
+#define EXPERIMENT_COUNT_BYTES 1024
+#define LOOP_COUNT_EXPERIMENTS 16
+#define LONG_SIZE_BITS (LONG_SIZE_BYTES * BYTE_SIZE_BITS)
 
-static void trand_buf(const SOCKET s, const struct sockaddr_in si_seedd, int slen, char *buf)
+static void trand_buf(char* buf)
 {
+	const char* fileName = "data.bin";
 	while (true)
 	{
 		bool ok = true;
-		memset(buf, 0, SEEDD_SIZE_BYTES);
-		u_short b = htons((u_short)SEEDD_SIZE_BYTES);
-		if (sendto(s, (const char *)&b, sizeof(u_short), 0, (struct sockaddr *)&si_seedd, slen) != SOCKET_ERROR)
+		memset(buf, 0, EXPERIMENT_COUNT_BYTES);
+		FILE* fp = _fsopen(fileName, "rb", _SH_DENYWR);
+		if (fp != NULL)
 		{
-			int rec = 0;
-			if ((rec = recvfrom(s, buf, SEEDD_SIZE_BYTES, 0, (struct sockaddr*)&si_seedd, &slen)) != SOCKET_ERROR)
+			fseek(fp, 0, SEEK_SET);
+			size_t bytesRead = fread(buf, 1, EXPERIMENT_COUNT_BYTES, fp);
+			if (bytesRead != EXPERIMENT_COUNT_BYTES)
 			{
-				if (rec != SEEDD_SIZE_BYTES)
-					ok = false;
-			}
-			else
 				ok = false;
+			}
+			FILE* tmp_fp;
+			errno_t err = freopen_s(&tmp_fp, fileName, "wb", fp);
+			if (err != 0 || tmp_fp == NULL)
+			{
+				fprintf(stderr, "Error reopening file for truncation: %s\n", fileName);
+			}
+			fclose(fp);
 		}
 		else
+		{
 			ok = false;
+			fprintf(stderr, "Failed to open file for reading: %s\n", fileName);
+		}
 		if (ok == true)
+		{
 			break;
+		}
+		Sleep(1 * 1000); 
 	}
 }
 
@@ -121,40 +134,32 @@ static void random_seed()
 	_s[1] = xorshift64star(&_s[0]);
 }
 
-#define LOOP_COUNT_CHUNKS 4096
-#define LOOP_COUNT_EXPERIMENTS 256
-#define LONG_SIZE_BITS (LONG_SIZE_BYTES * BYTE_SIZE_BITS)
-#define IP_SEEDD "127.0.0.1"
-#define PORT_SEEDD 1200
-
 int main(int argc, char *argv[])
 {
-	if (argc != 1)
-		return 1;
+	if (argc > 1)
+	{
+		fprintf(stderr, "Arguments ignored\n");
+	}
 	signal(SIGINT, &signal_handler);
-	SOCKET sock = INVALID_SOCKET;
-	struct sockaddr_in si_seedd;
-	int slen = sizeof(si_seedd);
-	WSADATA wsa;
 	const unsigned __int32 experiments = LOOP_COUNT_EXPERIMENTS;
-	const unsigned __int32 tosses = (LONG_SIZE_BITS * LOOP_COUNT_CHUNKS);
+	const unsigned __int32 tosses = (LONG_SIZE_BITS * EXPERIMENT_COUNT_BYTES);
 	if (tosses > 4294967295)
-		return 1;
+	{
+		fprintf(stderr, "Number of tosses per experiment exceeded: %d\n", 4294967295);
+	}
 	random_seed();
 	FILE* fp = _fsopen("TRNG.txt", "at", _SH_DENYWR);
 	if (fp == NULL)
+	{
+		fprintf(stderr, "Failed to open file: %s\n", "TRNG.txt");
 		return 1;
+	}
 	FILE* fpp = _fsopen("PRNG.txt", "at", _SH_DENYWR);
 	if (fpp == NULL)
+	{
+		fprintf(stderr, "Failed to open file: %s\n", "PRNG.txt");
 		return 1;
-	if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0)
-		return 1;
-	if ((sock = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) == INVALID_SOCKET)
-		return 1;
-	memset((char *)&si_seedd, 0, sizeof(si_seedd));
-	si_seedd.sin_family = AF_INET;
-	si_seedd.sin_port = htons(PORT_SEEDD);
-	inet_pton(si_seedd.sin_family, IP_SEEDD, &si_seedd.sin_addr);
+	}
 	time_t utime0 = time(NULL);
 	fprintf_date(stdout, utime0);
 	fprintf(stdout, "  ...\n");
@@ -173,15 +178,11 @@ int main(int argc, char *argv[])
 				fflush(stdout);
 			}
 			unsigned __int32 n = 0, f = 0, fp = 0;
-			char buf[SEEDD_SIZE_BYTES];
-			for (unsigned __int32 i = 0; i < LOOP_COUNT_CHUNKS; i++)
+			char buf[EXPERIMENT_COUNT_BYTES];
+			trand_buf(buf);
+			for (int i = 0; i < EXPERIMENT_COUNT_BYTES; i += LONG_SIZE_BYTES)
 			{
-				unsigned __int32 j = (i * BYTE_SIZE_BITS) % SEEDD_SIZE_BYTES;
-				if (j == 0)
-				{
-					trand_buf(sock, si_seedd, slen, buf);
-				}
-				unsigned __int64 r = trand_uint64(buf, j);
+				unsigned __int64 r = trand_uint64(buf, i);
 				f += popcnt(r);
 				unsigned __int64 rp = rand_uint64();
 				fp += popcnt(rp);
@@ -197,9 +198,13 @@ int main(int argc, char *argv[])
 			s[k] = e;
 			sp[k] = ep;
 			if (k == LOOP_COUNT_EXPERIMENTS - 1)
+			{
 				utime2 = time(NULL);
+			}
 			if (stop == true)
+			{
 				break;
+			}
 		}
 		if (stop == true)
 		{
@@ -212,7 +217,9 @@ int main(int argc, char *argv[])
 		}
 		double sm = 0., ss = 0.;
 		for (unsigned __int32 k = 0; k < LOOP_COUNT_EXPERIMENTS; k++)
+		{
 			sm += s[k];
+		}
 		sm = sm / ((double)experiments);
 		for (unsigned __int32 k = 0; k < LOOP_COUNT_EXPERIMENTS; k++)
 		{
@@ -262,12 +269,13 @@ int main(int argc, char *argv[])
 		fflush(fpp);
 	}
 	if (fp != NULL)
+	{
 		fclose(fp);
+	}
 	if (fpp != NULL)
+	{
 		fclose(fpp);
-	if (sock != INVALID_SOCKET)
-		closesocket(sock);
-	WSACleanup();
+	}
 	return 0;
 }
 

@@ -1,8 +1,6 @@
 ﻿using AnuQRandom;
 using AnuQRandom.Model;
 using System.Diagnostics.Meyer.Contracts;
-using System.Net;
-using System.Net.Sockets;
 
 namespace QRNG
 {
@@ -10,12 +8,8 @@ namespace QRNG
     {
         private static async Task GetNumbers_OldApi()
         {
-            IPEndPoint endPoint = new IPEndPoint(IPAddress.Loopback, 1200); 
-            Contract.Assert(endPoint != null, "endPoint != null");
-            Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-            Contract.Assert(socket != null, "socket != null");
-            long j = 0; 
-            while (true) 
+            long j = 0;
+            while (true)
             {
                 try
                 {
@@ -24,51 +18,57 @@ namespace QRNG
                         arrayLength = 0x400 // Get 1024 numbers
                     };
                     Contract.Assert(client != null, "client != null");
-                    QRNGConsole.Instance.OutputToConsole("Fetchng data from ANU QRNG (Australian National University Quantum Random Number Generator)...");
+                    QRNGConsole.Instance.OutputToConsole("Fetching data from ANU QRNG (Australian National University Quantum Random Number Generator)...");
                     RequestedData data = await client.RequestAsync();
                     Contract.Assert(data != null, "data != null");
                     QRNGConsole.Instance.OutputToConsole("Data fetched.");
                     if (data.Success)
                     {
                         QRNGConsole.Instance.OutputToConsole("Processing data...");
-                        int[] qrngData = new int[data.Data.Count]; 
+                        int[] qrngData = data.DataNumbers.ToArray();
                         Contract.Assert(qrngData != null, "qrngData != null");
-                        int i = 0; 
-                        foreach (int number in data.DataNumbers) 
-                        {
-                            qrngData[i] = number;
-                            i++;
-                        }
-                        QRNGConsole.Instance.OutputToConsole(@"---");
-                        string output = String.Format(@"{0} {1}: ", String.Format("{0:0000}", j), data.Length);
-                        for (i = 0; i < data.Length; i++)
-                        {
-                            output += String.Format(@"{0} ", String.Format("{0:000}", qrngData[i]));
-                        }
+                        string output = $"{j:0000} {data.Length}: {string.Join(" ", qrngData.Select(num => $"{num:000}"))}";
                         QRNGConsole.Instance.OutputToConsole(output);
-                        byte[] byteArray = new byte[qrngData.Length * sizeof(int)];
-                        Contract.Assert(byteArray != null, "byteArray != null");
-                        Buffer.BlockCopy(qrngData, 0, byteArray, 0, byteArray.Length);
-                        QRNGConsole.Instance.OutputToConsole("Data processed.");
-                        QRNGConsole.Instance.OutputToConsole("Sending data to socket...");
-                        try
+                        byte[] byteArray = new byte[qrngData.Length];
+                        for (int i = 0; i < qrngData.Length; i++)
                         {
-                            socket.SendTo(byteArray, endPoint);
-                            QRNGConsole.Instance.OutputToConsole("Data sent to socket."); 
+                            byteArray[i] = (byte)qrngData[i];
                         }
-                        catch (Exception e)
+                        QRNGConsole.Instance.OutputToConsole("Data processed.");
+                        bool success = false;
+                        int writeCount = 10;
+                        while (writeCount > 0 && !success)
                         {
-                            Console.WriteLine("Exception: " + e.Message);
+                            try
+                            {
+                                using (FileStream fs = new FileStream("data.bin", FileMode.Create, FileAccess.Write, FileShare.None))
+                                {
+                                    QRNGConsole.Instance.OutputToConsole("Writing data to file...");
+                                    fs.Write(byteArray, 0, byteArray.Length);
+                                    success = true;
+                                }
+                            }
+                            catch (IOException ex)
+                            {
+                                writeCount--;
+                                QRNGConsole.Instance.OutputToConsole($"Failed to write to file, retrying... ({10 - writeCount}/10)");
+                                System.Threading.Thread.Sleep(1000);
+                            }
+                        }
+
+                        if (!success)
+                        {
+                            QRNGConsole.Instance.OutputToConsole("Failed to write data to file after multiple retries.");
                         }
                         j++;
                     }
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine(String.Format(@"{0}", ex.Message));
+                    Console.WriteLine($"Error: {ex.Message}");
                 }
                 QRNGConsole.Instance.OutputToConsole("Waiting...");
-                System.Threading.Thread.Sleep(140*1000);
+                System.Threading.Thread.Sleep(140 * 1000);
             }
         }
 
