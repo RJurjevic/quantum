@@ -14,7 +14,7 @@ The quantum random data is retrieved from the [Australian National University Qu
 
 ## Experiment Details
 
-- **Coin Toss Simulation**: The experiment involves a series of 8192 coin tosses. Each experiment is repeated 16 times (forming an experiment run). Shannon Eta entropy is calculated for each experiment, and summary statistics (mean, standard deviation, minimum, and maximum entropy) are generated for the entire experiment run.
+- **Coin Toss Simulation**: The experiment involves a series of 65536 coin tosses. Each experiment is repeated 16 times (forming an experiment run). Shannon Eta entropy is calculated for each experiment, and summary statistics (mean, standard deviation, minimum, and maximum entropy) are generated for the entire experiment run.
 
 - **Output**: The processed data is used to generate visualizations via Google Charts in `RGNG.exe`.
 

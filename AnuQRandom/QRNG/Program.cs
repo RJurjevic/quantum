@@ -72,6 +72,11 @@ namespace QRNG
             }
         }
 
+        /// <summary>
+        /// Main entry point for the QRNG.exe application.
+        /// Fetches quantum-generated random data from the Australian National University Quantum Random Number Generator (ANU QRNG) server.
+        /// The data is processed and written to a local file 'data.bin', which will be used by RGNG.exe for coin toss simulation.
+        /// </summary>
         public static void Main() => GetNumbers_OldApi().GetAwaiter().GetResult();
     }
 }

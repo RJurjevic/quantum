@@ -134,6 +134,12 @@ static void random_seed()
 	_s[1] = xorshift64star(&_s[0]);
 }
 
+/**
+<summary>Main entry point for the RGNG.exe application.
+Reads random data from the local file 'data.bin', regardless of how the file was populated (by QRNG.exe or otherwise).
+Simulates a series of coin tosses and performs statistical analysis, including calculating Shannon Eta entropy.
+The results of the experiment are written to console and output files 'TRNG.txt' (quantum random data) and 'PRNG.txt' (pseudo-random data).</summary>
+*/
 int main(int argc, char *argv[])
 {
 	if (argc > 1)
