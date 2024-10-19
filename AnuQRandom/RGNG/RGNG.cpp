@@ -88,14 +88,14 @@ static void trand_buf(char* buf)
 			errno_t err = freopen_s(&tmp_fp, fileName, "wb", fp);
 			if (err != 0 || tmp_fp == NULL)
 			{
-				fprintf(stderr, "Error reopening file for truncation: %s\n", fileName);
+				// Silently handle error, no need to print
 			}
 			fclose(fp);
 		}
 		else
 		{
+			// File could not be opened, likely because QRNG.exe is writing to it
 			ok = false;
-			fprintf(stderr, "Failed to open file for reading: %s\n", fileName);
 		}
 		if (ok == true)
 		{
@@ -148,7 +148,7 @@ int main(int argc, char *argv[])
 	}
 	signal(SIGINT, &signal_handler);
 	const unsigned __int32 experiments = LOOP_COUNT_EXPERIMENTS;
-	const unsigned __int32 tosses = (LONG_SIZE_BITS * EXPERIMENT_COUNT_BYTES);
+	const unsigned __int32 tosses = (LONG_SIZE_BITS * EXPERIMENT_COUNT_BYTES / LONG_SIZE_BYTES);
 	if (tosses > 4294967295)
 	{
 		fprintf(stderr, "Number of tosses per experiment exceeded: %d\n", 4294967295);

@@ -6,7 +6,21 @@ This project, designed for the Windows platform, uses two software processes: `R
 
 The quantum random data is retrieved from the [Australian National University Quantum Random Number Generator (ANU QRNG)](https://qrng.anu.edu.au/) server, which generates true random numbers based on quantum fluctuations.
 
-## Project Components
+### Investigating the Hypothesis
+
+Initially, I believed that seeing Shannon Eta entropy events in the range of minus 9 to 12 sigma clearly indicated that the TRNG was influenced, as such events should be extremely rare. However, after performing brute force statistical calculations using Mathematica, I discovered that these events are not as rare as expected.
+
+The behavior of the TRNG was found to be statistically normal. A parallel comparison with a good pseudo-random number generator (PRNG) revealed similar behavior between the TRNG and PRNG. Therefore, my conclusion is that both generators behaved exactly as predicted by statistical models, which falsifies Dr. Radin's claim that the mind may influence TRNGs.
+
+#### Brute Force Statistical Analysis
+
+Shannon Eta entropy depends only on the number of 1s in the binary representation of 8192 bits. I calculated the entropy for specific numbers of 1s and used a formula to compute how many permutations with that number of 1s exist. From there, I calculated the probability of that Shannon Eta entropy occurring in the experiment.
+
+The brute force calculation shows that events with minus 9 to 12 sigma occur far more frequently than normal distribution assumptions would suggest. In fact, my results show that these events, which would occur once every hundred years under a normal distribution assumption, actually happen much more often—roughly once every half a day in my experiments.
+
+> "This project demonstrates a well-structured approach to both random number generation and data analysis, using two independent software components to compare the behavior of quantum-based true random number generators (TRNG) with high-quality pseudo-random number generators (PRNG). Through robust statistical analysis, including Shannon Eta entropy calculations, the results show that both TRNG and PRNG behave consistently with statistical expectations, falsifying Dr. Radin's hypothesis that the mind may influence TRNGs." — ChatGPT
+
+### Project Components
 
 - **`QRNG.exe`**: Fetches quantum-generated random data from the ANU QRNG server. The data is written to a local file `data.bin` for `RGNG.exe` to process.
   
@@ -14,7 +28,7 @@ The quantum random data is retrieved from the [Australian National University Qu
 
 ## Experiment Details
 
-- **Coin Toss Simulation**: The experiment involves a series of 65536 coin tosses. Each experiment is repeated 16 times (forming an experiment run). Shannon Eta entropy is calculated for each experiment, and summary statistics (mean, standard deviation, minimum, and maximum entropy) are generated for the entire experiment run.
+- **Coin Toss Simulation**: The experiment involves a series of 8192 coin tosses. Each experiment is repeated 16 times (forming an experiment run). Shannon Eta entropy is calculated for each experiment, and summary statistics (mean, standard deviation, minimum, and maximum entropy) are generated for the entire experiment run.
 
 - **Output**: The processed data is used to generate visualizations via Google Charts in `RGNG.exe`.
 
