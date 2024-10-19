@@ -6,21 +6,17 @@ This project, designed for the Windows platform, uses two software processes: `R
 
 The quantum random data is retrieved from the [Australian National University Quantum Random Number Generator (ANU QRNG)](https://qrng.anu.edu.au/) server, which generates true random numbers based on quantum fluctuations.
 
-### Investigating the Hypothesis
+## Falsifying Dr. Radin’s Hypothesis with BitBabbler TRNG
 
-Initially, I believed that seeing Shannon Eta entropy events in the range of minus 9 to 12 sigma clearly indicated that the TRNG was influenced, as such events should be extremely rare. However, after performing brute force statistical calculations using Mathematica, I discovered that these events are not as rare as expected.
+Initially, the project sought to validate or falsify Dr. Radin's claim using a **BitBabbler White TRNG** (based on transistor noise, also manufactured in Australia). By performing extensive statistical calculations, I found that **Shannon Eta entropy** results falling within the range of minus 9 to 12 sigma (a measure of statistical deviation) occurred far more frequently than expected if one assumes a **normal distribution** of the entropy values.
 
-The behavior of the TRNG was found to be statistically normal. A parallel comparison with a good pseudo-random number generator (PRNG) revealed similar behavior between the TRNG and PRNG. Therefore, my conclusion is that both generators behaved exactly as predicted by statistical models, which falsifies Dr. Radin's claim that the mind may influence TRNGs.
+- **Minus 9 to 12 sigma**: In a normal distribution, events that fall outside this range would be considered highly improbable, leading one to expect them to occur very rarely (perhaps once in hundreds of years). However, with the **BitBabbler White TRNG**, such extreme events appeared much more often—roughly once every half a day—which aligned with brute-force statistical calculations.
 
-#### Brute Force Statistical Analysis
+This suggests that the assumption of normal distribution is wrong in this context and that both the TRNG and PRNG behaved as expected statistically. Thus, **Dr. Radin’s hypothesis was falsified**, at least when using the BitBabbler White TRNG.
 
-Shannon Eta entropy depends only on the number of 1s in the binary representation of 8192 bits. I calculated the entropy for specific numbers of 1s and used a formula to compute how many permutations with that number of 1s exist. From there, I calculated the probability of that Shannon Eta entropy occurring in the experiment.
+**Note**: These results were specific to the **BitBabbler White TRNG** based on transistor noise. The tests with the **QRNG** (Quantum Random Number Generator) from ANU have not been thoroughly performed yet to reach similar conclusions.
 
-The brute force calculation shows that events with minus 9 to 12 sigma occur far more frequently than normal distribution assumptions would suggest. In fact, my results show that these events, which would occur once every hundred years under a normal distribution assumption, actually happen much more often—roughly once every half a day in my experiments.
-
-> "This project demonstrates a well-structured approach to both random number generation and data analysis, using two independent software components to compare the behavior of quantum-based true random number generators (TRNG) with high-quality pseudo-random number generators (PRNG). Through robust statistical analysis, including Shannon Eta entropy calculations, the results show that both TRNG and PRNG behave consistently with statistical expectations, falsifying Dr. Radin's hypothesis that the mind may influence TRNGs." — ChatGPT
-
-### Project Components
+## Project Components
 
 - **`QRNG.exe`**: Fetches quantum-generated random data from the ANU QRNG server. The data is written to a local file `data.bin` for `RGNG.exe` to process.
   
