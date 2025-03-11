@@ -8,23 +8,18 @@ The quantum random data is retrieved from the [Australian National University Qu
 
 ## **Falsifying Dr. Radin’s Hypothesis with BitBabbler TRNG**
 
-Initially, the project aimed to rigorously test Dr. Radin's claim using the **BitBabbler White TRNG** (a transistor noise-based true random number generator, manufactured in Australia). Rather than merely identifying similar entropy patterns between **TRNG and PRNG**, I conducted a **precise statistical analysis**, directly modeling entropy fluctuations as **binomially distributed coin tosses**.
+Initially, I suspected that **Shannon Eta entropy** values in the range of **-9σ to -12σ** indicated a significant deviation from randomness—suggesting that the **TRNG was influenced** by an external factor. Given how rare such events should be under a **normal distribution**, I expected them to occur far less frequently than observed, making their presence seem anomalous.
 
-### **Key Statistical Findings:**
-- **Extreme entropy fluctuations (-9σ to -12σ)** occurred **far more frequently than expected** under the assumption of a **normal distribution**.  
-- However, when modeling the process as a **binomial distribution** (a more accurate representation of entropy variation in a sequence of random bits), these extreme deviations became statistically **expected** rather than anomalous.  
+However, after conducting a **brute-force statistical analysis** using **Mathematica**, I found that these extreme entropy deviations were **not rare at all** when modeled correctly using **binomial statistics**. The key realization was that **assuming a normal distribution was incorrect**, and once the correct statistical framework was applied, the observed behavior of the TRNG was **entirely expected**.
 
-### **Experimental vs. Statistical Model Comparison:**
-- If entropy fluctuations followed a **normal distribution**, deviations beyond **±9σ** should be astronomically rare—occurring roughly **once in hundreds or thousands of years**.  
-- Instead, in both the **TRNG and PRNG tests**, extreme entropy fluctuations appeared **approximately once every 12 hours**—a discrepancy that initially seemed anomalous.  
-- However, my **brute-force statistical calculation**, based on binomial probability, **predicted this frequency exactly**, confirming that such extreme deviations are naturally occurring in this entropy process.  
+To verify this further, I ran a high-quality **pseudo-random number generator (PRNG)** in parallel with the **BitBabbler White TRNG**. The **PRNG exhibited similar entropy fluctuations**, reinforcing the conclusion that both **TRNG and PRNG behaved as expected** according to statistical theory.
 
 ### **Conclusion:**
-- The assumption of **normality** in entropy fluctuations is incorrect.  
-- The observed behavior of the **TRNG (BitBabbler White) and PRNG** closely matched the predictions of my **binomial probability model**, rather than the assumption of Gaussian (normal) distribution.  
-- As a result, **Dr. Radin’s hypothesis was falsified**, at least when tested with the **BitBabbler White TRNG**—since the extreme entropy deviations he considered anomalous are actually **statistically expected events**.
+- The presence of **extreme entropy deviations (-9σ to -12σ)** does **not** indicate an anomaly but is a **statistical expectation** under the correct probability model.
+- Both the **TRNG and PRNG** followed the same statistical behavior, confirming that no unusual external influence was at play.
+- As a result, **Dr. Radin’s claim that mind may influence TRNGs was falsified**, at least in the case of this experiment.
 
-**Note**: These results are specific to the **BitBabbler White TRNG** based on **transistor noise**. Tests with the **QRNG (Quantum Random Number Generator)** from **ANU** have not yet been conducted with the same depth to determine whether similar conclusions hold for quantum-generated entropy.
+**Note**: These results are specific to the **BitBabbler White TRNG**, which is based on **transistor noise**. Additional tests with the **ANU QRNG** have yet to be conducted in the same manner to determine whether the findings hold for quantum-based randomness.
 
 ## Project Components
 
