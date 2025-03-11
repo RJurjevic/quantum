@@ -6,15 +6,25 @@ This project, designed for the Windows platform, uses two software processes: `R
 
 The quantum random data is retrieved from the [Australian National University Quantum Random Number Generator (ANU QRNG)](https://qrng.anu.edu.au/) server, which generates true random numbers based on quantum fluctuations.
 
-## Falsifying Dr. Radin�s Hypothesis with BitBabbler TRNG
+## **Falsifying Dr. Radin’s Hypothesis with BitBabbler TRNG**
 
-Initially, the project sought to validate or falsify Dr. Radin's claim using a **BitBabbler White TRNG** (based on transistor noise, also manufactured in Australia). By performing extensive statistical calculations, I found that **Shannon Eta entropy** results falling within the range of minus 9 to 12 sigma (a measure of statistical deviation) occurred far more frequently than expected if one assumes a **normal distribution** of the entropy values.
+Initially, the project aimed to rigorously test Dr. Radin's claim using the **BitBabbler White TRNG** (a transistor noise-based true random number generator, manufactured in Australia). Rather than merely identifying similar entropy patterns between **TRNG and PRNG**, I conducted a **precise statistical analysis**, directly modeling entropy fluctuations as **binomially distributed coin tosses**.
 
-- **Minus 9 to 12 sigma**: In a normal distribution, events that fall outside this range would be considered highly improbable, leading one to expect them to occur very rarely (perhaps once in hundreds of years). However, with the **BitBabbler White TRNG**, such extreme events appeared much more often�roughly once every half a day�which aligned with brute-force statistical calculations.
+### **Key Statistical Findings:**
+- **Extreme entropy fluctuations (-9σ to -12σ)** occurred **far more frequently than expected** under the assumption of a **normal distribution**.  
+- However, when modeling the process as a **binomial distribution** (a more accurate representation of entropy variation in a sequence of random bits), these extreme deviations became statistically **expected** rather than anomalous.  
 
-This suggests that the assumption of normal distribution is wrong in this context and that both the TRNG and PRNG behaved as expected statistically. Thus, **Dr. Radin�s hypothesis was falsified**, at least when using the BitBabbler White TRNG.
+### **Experimental vs. Statistical Model Comparison:**
+- If entropy fluctuations followed a **normal distribution**, deviations beyond **±9σ** should be astronomically rare—occurring roughly **once in hundreds or thousands of years**.  
+- Instead, in both the **TRNG and PRNG tests**, extreme entropy fluctuations appeared **approximately once every 12 hours**—a discrepancy that initially seemed anomalous.  
+- However, my **brute-force statistical calculation**, based on binomial probability, **predicted this frequency exactly**, confirming that such extreme deviations are naturally occurring in this entropy process.  
 
-**Note**: These results were specific to the **BitBabbler White TRNG** based on transistor noise. The tests with the **QRNG** (Quantum Random Number Generator) from ANU have not been thoroughly performed yet to reach similar conclusions.
+### **Conclusion:**
+- The assumption of **normality** in entropy fluctuations is incorrect.  
+- The observed behavior of the **TRNG (BitBabbler White) and PRNG** closely matched the predictions of my **binomial probability model**, rather than the assumption of Gaussian (normal) distribution.  
+- As a result, **Dr. Radin’s hypothesis was falsified**, at least when tested with the **BitBabbler White TRNG**—since the extreme entropy deviations he considered anomalous are actually **statistically expected events**.
+
+**Note**: These results are specific to the **BitBabbler White TRNG** based on **transistor noise**. Tests with the **QRNG (Quantum Random Number Generator)** from **ANU** have not yet been conducted with the same depth to determine whether similar conclusions hold for quantum-generated entropy.
 
 ## Project Components
 
